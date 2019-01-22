@@ -29,6 +29,33 @@ func ReadInteger() int{
 	return i
 }
 
+func CheckIfOccupied(level [3][3]string, i,j int) bool {
+	if _, err := strconv.Atoi(level[i][j]); err == nil {
+		return false
+	} else {
+		return true
+	}
+}
+
+func UserTurn(level *[3][3]string, sign string) int{
+	var usersel int
+	fmt.Printf("Επιλέξτε θέση: ")
+	usersel = ReadInteger()
+	ok := false
+	for ; ok == false; {
+		usersel-=1
+		ok = usersel +1 > 0 && usersel+1 < 10 && !CheckIfOccupied(*level, usersel/3,usersel%3)
+		if ok == false {
+			fmt.Printf("Λάθος επιλογή!\n")
+			fmt.Printf("Επιλέξτε θέση: ")
+			usersel = ReadInteger()
+		}
+	}
+	level[usersel/3][usersel%3] = sign
+	return usersel
+}
+
+
 func CheckComplete(lev [3][3]string) int{
 	//Επιστρέφω 0 αν δεν έχει σηματιστεί τριάδα, 1 αν νίκησε ο player1, 2 αν νίκησε ο player2
 	for i:=0;i<3;i++{

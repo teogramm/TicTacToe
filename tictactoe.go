@@ -1,6 +1,7 @@
 package main
 
 import (
+	"TicTacToe/network"
 	"TicTacToe/persistence"
 	"TicTacToe/utilities"
 	"fmt"
@@ -97,14 +98,14 @@ func ai_turn(level *[3][3]string, moves int) {
 		i, j = checkForThree(*level, player2)
 		if i != -1 {
 			fmt.Println(i,j)
-			if !checkIfOccupied(*level, i, j) {
+			if !utilities.CheckIfOccupied(*level, i, j) {
 				level[i][j] = player2
 				return
 			}
 		}
 		i, j = checkForThree(*level, player1)
 		if i != -1 {
-			if !checkIfOccupied(*level,i,j) {
+			if !utilities.CheckIfOccupied(*level,i,j) {
 				level[i][j] = player2
 				return
 			}
@@ -150,10 +151,10 @@ func ai_turn(level *[3][3]string, moves int) {
 func menu() int {
 	var usersel int
 	fmt.Printf("ΤΡΙΛΙΖΑ!!!\n1.Παιχνίδι με τον υπολογιστή\n2.Παινχίδι με 2 παίκτες\n3.Προβολή στατιστικών για " +
-		"παίκτη\n4.Έξοδος\nΕπιλέξτε: ")
+		"παίκτη\n4.Έξοδος\n5.Παιχνίδι δικτύου\nΕπιλέξτε: ")
 	usersel= utilities.ReadInteger()
-	for ; usersel < 1 || usersel > 4; {
-		if usersel < 1 || usersel > 4 {
+	for ; usersel < 1 || usersel > 5; {
+		if usersel < 1 || usersel > 5 {
 			fmt.Printf("Λάθος επιλογή!\n")
 			fmt.Printf("ΤΡΙΛΙΖΑ!!!\n1.Παιχνίδι με τον υπολογιστή\n2.Παινχίδι με 2 παίκτες\n3.Προβολή στατιστικών για " +
 				"παίκτη\n4.Έξοδος\nΕπιλέξτε: ")
@@ -161,31 +162,6 @@ func menu() int {
 		}
 	}
 	return usersel
-}
-
-func checkIfOccupied(level [3][3]string, i,j int) bool {
-	if _, err := strconv.Atoi(level[i][j]); err == nil {
-		return false
-	} else {
-		return true
-	}
-}
-
-func userTurn(level *[3][3]string, sign string) {
-	var usersel int
-	fmt.Printf("Επιλέξτε θέση: ")
-	usersel = utilities.ReadInteger()
-	ok := false
-	for ; ok == false; {
-		usersel-=1
-		ok = usersel +1 > 0 && usersel+1 < 10 && !checkIfOccupied(*level, usersel/3,usersel%3)
-		if ok == false {
-			fmt.Printf("Λάθος επιλογή!\n")
-			fmt.Printf("Επιλέξτε θέση: ")
-			usersel = utilities.ReadInteger()
-		}
-	}
-	level[usersel/3][usersel%3] = sign
 }
 
 func main() {
@@ -216,7 +192,7 @@ func main() {
 			win := 0
 			for ; moves < 9 && win == 0; {
 				utilities.ShowBoard(level)
-				userTurn(&level, player1)
+				_ = utilities.UserTurn(&level, player1)
 				win = utilities.CheckComplete(level)
 				moves++
 				if win != 0 || moves > 8 {
@@ -224,7 +200,7 @@ func main() {
 				}
 				if sel == 2 {
 					utilities.ShowBoard(level)
-					userTurn(&level, player2)
+					_ = utilities.UserTurn(&level, player2)
 				} else {
 					ai_turn(&level,moves)
 				}
@@ -261,6 +237,21 @@ func main() {
 				fmt.Println("Δεν υπάρχει ο παίκτης!")
 			} else{
 				players[index].PlayerStats()
+			}
+		}
+		if sel == 5{
+			for{
+				sel = utilities.ReadInteger()
+				if sel <1 || sel>2{
+					continue
+				} else{
+					break
+				}
+			}
+			if sel==1{
+				network.Server()
+			}else{
+				network.Client()
 			}
 		}
 	}

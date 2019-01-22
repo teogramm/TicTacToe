@@ -15,7 +15,7 @@ type Player struct {
 	Wins, Draws, Losses int
 }
 
-func clearNewline(temp *string){
+func ClearNewLine(temp *string){
 	*temp = strings.TrimRight(*temp,"\r\n")
 }
 
@@ -33,7 +33,7 @@ func Getname() string{
 	var buffer string
 	fmt.Printf("Εισάγετε το όνομα σας: ")
 	buffer,_ = reader.ReadString('\n')
-	clearNewline(&buffer)
+	ClearNewLine(&buffer)
 	return buffer
 }
 
