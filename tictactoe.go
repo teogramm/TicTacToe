@@ -1,10 +1,10 @@
 package main
 
 import (
-	"TicTacToe/network"
-	"TicTacToe/persistence"
-	"TicTacToe/utilities"
 	"fmt"
+	"github.com⁄Teogramm⁄TicTacToe/network"
+	"github.com⁄Teogramm⁄TicTacToe/persistence"
+	"github.com⁄Teogramm⁄TicTacToe/utilities"
 	"math/rand"
 	"strconv"
 	"time"
@@ -97,7 +97,7 @@ func ai_turn(level *[3][3]string, moves int) {
 	} else {
 		i, j = checkForThree(*level, player2)
 		if i != -1 {
-			fmt.Println(i,j)
+			fmt.Println(i, j)
 			if !utilities.CheckIfOccupied(*level, i, j) {
 				level[i][j] = player2
 				return
@@ -105,7 +105,7 @@ func ai_turn(level *[3][3]string, moves int) {
 		}
 		i, j = checkForThree(*level, player1)
 		if i != -1 {
-			if !utilities.CheckIfOccupied(*level,i,j) {
+			if !utilities.CheckIfOccupied(*level, i, j) {
 				level[i][j] = player2
 				return
 			}
@@ -122,7 +122,7 @@ func ai_turn(level *[3][3]string, moves int) {
 			level[i][j] = player2
 			return
 		}
-		if level[1][1] == player1 && moves ==3 {
+		if level[1][1] == player1 && moves == 3 {
 			r := rand.New(rand.NewSource(time.Now().UnixNano()))
 			i := r.Intn(4)
 			switch i {
@@ -137,10 +137,10 @@ func ai_turn(level *[3][3]string, moves int) {
 			}
 			return
 		}
-		for i=0;i<3;i++{
-			for j=0;j<3;j++{
-				if level[i][j]!=player1 &&level[i][j]!=player2{
-					level[i][j]=player2
+		for i = 0; i < 3; i++ {
+			for j = 0; j < 3; j++ {
+				if level[i][j] != player1 && level[i][j] != player2 {
+					level[i][j] = player2
 					return
 				}
 			}
@@ -152,13 +152,13 @@ func menu() int {
 	var usersel int
 	fmt.Printf("ΤΡΙΛΙΖΑ!!!\n1.Παιχνίδι με τον υπολογιστή\n2.Παινχίδι με 2 παίκτες\n3.Προβολή στατιστικών για " +
 		"παίκτη\n4.Έξοδος\n5.Παιχνίδι δικτύου\nΕπιλέξτε: ")
-	usersel= utilities.ReadInteger()
+	usersel = utilities.ReadInteger()
 	for ; usersel < 1 || usersel > 5; {
 		if usersel < 1 || usersel > 5 {
 			fmt.Printf("Λάθος επιλογή!\n")
 			fmt.Printf("ΤΡΙΛΙΖΑ!!!\n1.Παιχνίδι με τον υπολογιστή\n2.Παινχίδι με 2 παίκτες\n3.Προβολή στατιστικών για " +
 				"παίκτη\n4.Έξοδος\nΕπιλέξτε: ")
-			usersel=utilities.ReadInteger()
+			usersel = utilities.ReadInteger()
 		}
 	}
 	return usersel
@@ -166,24 +166,24 @@ func menu() int {
 
 func main() {
 	var sel int
-	sel =0
+	sel = 0
 	var index2 int
-	var players[]persistence.Player
-	for ;sel!=4;{
+	var players []persistence.Player
+	for ; sel != 4; {
 		players = persistence.LoadFile()
 		sel = menu()
 		if sel < 3 { //Αν ο χρήστης επιλέξει παιχνίδι αρχίζω το ταμπλό
 			tempname := persistence.Getname()
-			index1 := persistence.SearchName(tempname,&players)
-			if index1==-1{
-				players = append(players,persistence.NewPlayer(tempname))
+			index1 := persistence.SearchName(tempname, &players)
+			if index1 == -1 {
+				players = append(players, persistence.NewPlayer(tempname))
 				index1 = len(players) - 1
 			}
-			if sel ==2 {
+			if sel == 2 {
 				tempname = persistence.Getname()
-				index2 = persistence.SearchName(tempname,&players)
-				if index2==-1{
-					players = append(players,persistence.NewPlayer(tempname))
+				index2 = persistence.SearchName(tempname, &players)
+				if index2 == -1 {
+					players = append(players, persistence.NewPlayer(tempname))
 					index2 = len(players) - 1
 				}
 			}
@@ -202,7 +202,7 @@ func main() {
 					utilities.ShowBoard(level)
 					_ = utilities.UserTurn(&level, player2)
 				} else {
-					ai_turn(&level,moves)
+					ai_turn(&level, moves)
 				}
 				win = utilities.CheckComplete(level)
 				moves++
@@ -211,47 +211,47 @@ func main() {
 				}
 			}
 			utilities.ShowBoard(level)
-			utilities.DisplayWinner(win,moves)
-			if moves == 9{
+			utilities.DisplayWinner(win, moves)
+			if moves == 9 {
 				players[index1].Draws++
-				if sel ==2{
+				if sel == 2 {
 					players[index2].Draws++
 				}
-			}else if win==1{
+			} else if win == 1 {
 				players[index1].Wins++
-				if sel==2{
+				if sel == 2 {
 					players[index2].Losses++
 				}
-			}else if win==2{
+			} else if win == 2 {
 				players[index1].Losses++
-				if sel==2{
+				if sel == 2 {
 					players[index2].Wins++
 				}
 			}
 			persistence.SaveFile(&players)
 		}
-		if sel==3{
+		if sel == 3 {
 			temp := persistence.Getname()
-			index := persistence.SearchName(temp,&players)
-			if index==-1{
+			index := persistence.SearchName(temp, &players)
+			if index == -1 {
 				fmt.Println("Δεν υπάρχει ο παίκτης!")
-			} else{
+			} else {
 				players[index].PlayerStats()
 			}
 		}
-		if sel == 5{
-			for{
+		if sel == 5 {
+			for {
 				sel = utilities.ReadInteger()
-				if sel <1 || sel>2{
+				if sel < 1 || sel > 2 {
 					continue
-				} else{
+				} else {
 					break
 				}
 			}
-			if sel==1{
-				network.Server()
-			}else{
-				network.Client()
+			if sel == 1 {
+				network.ServerFlow()
+			} else {
+				network.ClientFlow()
 			}
 		}
 	}
