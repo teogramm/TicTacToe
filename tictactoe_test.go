@@ -1,7 +1,7 @@
 package main
 
 import "testing"
-import "github.com⁄Teogramm⁄TicTacToe/utilities"
+import "github.com⁄teogramm⁄TicTacToe/utilities"
 
 
 func TestThree(t *testing.T){
