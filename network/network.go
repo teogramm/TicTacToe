@@ -12,6 +12,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Client struct {
@@ -32,6 +33,28 @@ type Server struct {
 	first  bool
 }
 
+func getServerIP(){
+	var ip net.IP
+	//TODO: Not lazy check
+	localip := regexp.MustCompile("192\\.168.*|10.*|172.[1-3].*]")
+	ifaces, _ := net.Interfaces()
+	for _, i := range ifaces {
+		addrs, _ := i.Addrs()
+		// handle err
+		for _, addr := range addrs {
+			switch v := addr.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			}
+			if localip.MatchString(ip.String()) {
+				fmt.Println("Your IP is:", ip)
+			}
+		}
+	}
+}
+
 func (server *Server) Initialize() {
 	server.level = utilities.InitializeBoard()
 	server.name = persistence.Getname()
@@ -39,18 +62,30 @@ func (server *Server) Initialize() {
 	if err != nil {
 		panic(err)
 	}
+	getServerIP()
 	fmt.Printf("Waiting for connection...\n")
 	conn, err := ln.Accept()
 	if err != nil {
 		panic(err)
 	}
+	defer conn.Close()
 	server.writer = bufio.NewWriter(conn)
 	server.reader = bufio.NewReader(conn)
 	server.Negotiate()
+	server.tradeName()
 	server.Game()
 }
 
+func (server *Server) tradeName(){
+	var n string
+	n,_ = server.reader.ReadString('\n')
+	persistence.ClearNewLine(&n)
+	fmt.Println("Παίζεις με τον παίκτη",n,"!")
+	sendString(server.name,server.writer)
+}
+
 func (server *Server) Negotiate() {
+	rand.Seed(time.Now().UTC().Unix())
 	switch n := rand.Intn(1); n {
 	case 0:
 		server.sign = "X"
@@ -78,6 +113,7 @@ func (server *Server) Game() {
 			moves++
 			if win != 0 || moves == 9 {
 				sendEnd(win, moves, server.writer)
+				break
 			}
 			sendString(strconv.Itoa(n), server.writer)
 		}
@@ -90,6 +126,7 @@ func (server *Server) Game() {
 		win = utilities.CheckComplete(server.level)
 		if win != 0 || moves == 9 {
 			sendEnd(win, moves, server.writer)
+			break
 		}
 	}
 }
@@ -149,8 +186,17 @@ func (client *Client) Connect() {
 	client.writer = bufio.NewWriter(conn)
 	client.reader = bufio.NewReader(conn)
 	client.getSign()
+	client.tradeName()
 	client.game()
 	conn.Close()
+}
+
+func (client *Client) tradeName(){
+	var n string
+	sendString(client.name,client.writer)
+	n,_ = client.reader.ReadString('\n')
+	persistence.ClearNewLine(&n)
+	fmt.Println("Παίζεις με τον παίκτη",n,"!")
 }
 
 func (client *Client) getSign() {

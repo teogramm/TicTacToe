@@ -13,7 +13,7 @@ import (
 const player1 = "O"
 const player2 = "X"
 
-func checkForThree(level [3][3]string, player string) (i, j int) {
+func CheckForThree(level [3][3]string, player string) (i, j int) {
 	//Ελέγχει εάν πρόκειται να σχηματιστεί τριάδα από κάποιο σύμβολο
 	var opposite string
 	var streak int
@@ -95,7 +95,7 @@ func ai_turn(level *[3][3]string, moves int) {
 		level[1][1] = player2
 		return
 	} else {
-		i, j = checkForThree(*level, player2)
+		i, j = CheckForThree(*level, player2)
 		if i != -1 {
 			fmt.Println(i, j)
 			if !utilities.CheckIfOccupied(*level, i, j) {
@@ -103,7 +103,7 @@ func ai_turn(level *[3][3]string, moves int) {
 				return
 			}
 		}
-		i, j = checkForThree(*level, player1)
+		i, j = CheckForThree(*level, player1)
 		if i != -1 {
 			if !utilities.CheckIfOccupied(*level, i, j) {
 				level[i][j] = player2
@@ -113,6 +113,7 @@ func ai_turn(level *[3][3]string, moves int) {
 		if level[1][1] == player1 && moves == 1 {
 			r := rand.New(rand.NewSource(time.Now().UnixNano()))
 			i := r.Intn(2)
+			j := r.Intn(2)
 			if i == 1 {
 				i = 2
 			}
@@ -241,6 +242,7 @@ func main() {
 		}
 		if sel == 5 {
 			for {
+				fmt.Printf("1.Server\n2.Client\nΕπιλέξτε: ")
 				sel = utilities.ReadInteger()
 				if sel < 1 || sel > 2 {
 					continue
