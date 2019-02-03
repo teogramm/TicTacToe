@@ -3,8 +3,8 @@ package network
 import (
 	"bufio"
 	"fmt"
-	"TicTacToe/persistence"
-	"TicTacToe/utilities"
+	"github.com/teogramm/TicTacToe/persistence"
+	"github.com/teogramm/TicTacToe/utilities"
 	"io"
 	"math/rand"
 	"net"
