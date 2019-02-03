@@ -79,7 +79,7 @@ func (server *Server) Initialize() {
 func (server *Server) tradeName(){
 	var n string
 	n,_ = server.reader.ReadString('\n')
-	persistence.ClearNewLine(&n)
+	utilities.ClearNewLine(&n)
 	fmt.Println("Παίζεις με τον παίκτη",n,"!")
 	sendString(server.name,server.writer)
 }
@@ -119,7 +119,7 @@ func (server *Server) Game() {
 		}
 		server.first = true
 		str, _ = server.reader.ReadString('\n')
-		persistence.ClearNewLine(&str)
+		utilities.ClearNewLine(&str)
 		n, _ := strconv.Atoi(str)
 		server.level[n/3][n%3] = "O"
 		moves++
@@ -195,13 +195,13 @@ func (client *Client) tradeName(){
 	var n string
 	sendString(client.name,client.writer)
 	n,_ = client.reader.ReadString('\n')
-	persistence.ClearNewLine(&n)
+	utilities.ClearNewLine(&n)
 	fmt.Println("Παίζεις με τον παίκτη",n,"!")
 }
 
 func (client *Client) getSign() {
 	s, _ := client.reader.ReadString('\n')
-	persistence.ClearNewLine(&s)
+	utilities.ClearNewLine(&s)
 	client.sign = s
 	if s == "O" {
 		client.first = false
@@ -227,7 +227,7 @@ func (client *Client) game() {
 			fmt.Println("Network error!")
 			break
 		}
-		persistence.ClearNewLine(&str)
+		utilities.ClearNewLine(&str)
 		n, _ = strconv.Atoi(str)
 		if n == -1 {
 			fmt.Printf("You lost!")

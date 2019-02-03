@@ -177,14 +177,18 @@ func main() {
 			tempname := persistence.Getname()
 			index1 := persistence.SearchName(tempname, &players)
 			if index1 == -1 {
-				players = append(players, persistence.NewPlayer(tempname))
+				var player persistence.Player
+				player.NewPlayer(tempname)
+				players = append(players, player)
 				index1 = len(players) - 1
 			}
 			if sel == 2 {
 				tempname = persistence.Getname()
 				index2 = persistence.SearchName(tempname, &players)
 				if index2 == -1 {
-					players = append(players, persistence.NewPlayer(tempname))
+					var player persistence.Player
+					player.NewPlayer(tempname)
+					players = append(players, player)
 					index2 = len(players) - 1
 				}
 			}

@@ -1,11 +1,11 @@
 package utilities
 
-import(
+import (
 	"bufio"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
-	"os"
 )
 
 const player1 = "O"
@@ -55,6 +55,20 @@ func UserTurn(level *[3][3]string, sign string) int{
 	return usersel
 }
 
+func PromptYesNo() bool{
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Printf("%s","Y/N?")
+	input,_ := reader.ReadString('\n')
+	for{
+		if strings.ToLower(input) == "y\n" || strings.ToLower(input) == "yes\n"{
+			return true
+		} else if strings.ToLower(input) == "n\n" || strings.ToLower(input) == "no\n"{
+			return false
+		}
+		fmt.Printf("\nWrong input! ")
+		input,_ = reader.ReadString('\n')
+	}
+}
 
 func CheckComplete(lev [3][3]string) int{
 	//Επιστρέφω 0 αν δεν έχει σηματιστεί τριάδα, 1 αν νίκησε ο player1, 2 αν νίκησε ο player2
@@ -104,11 +118,11 @@ func ShowBoard(level [3][3]string){
 
 func DisplayWinner(win,moves int){
 	if moves == 9{
-		fmt.Println("Ισοπαλία")
+		fmt.Println("Draw")
 	} else if win == 1{
-		fmt.Println("Νίκησε ο παίκτης 1!")
+		fmt.Println("Player 1 won!")
 	} else if win ==2{
-		fmt.Println("Νίκησε ο παίκτης 2!")
+		fmt.Println("Player 2 won!")
 	}
 }
 
@@ -123,3 +137,8 @@ func InitializeBoard()[3][3]string{
 	}
 	return level
 }
+
+func ClearNewLine(temp *string) {
+	*temp = strings.TrimRight(*temp, "\r\n")
+}
+

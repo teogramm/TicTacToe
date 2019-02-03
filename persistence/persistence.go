@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"encoding/csv"
 	"fmt"
+	"github.com/teogramm/TicTacToe/utilities"
 	"io"
 	"os"
 	"strconv"
-	"strings"
 )
 
 type Player struct {
@@ -15,8 +15,12 @@ type Player struct {
 	Wins, Draws, Losses int
 }
 
-func ClearNewLine(temp *string){
-	*temp = strings.TrimRight(*temp,"\r\n")
+
+func (player *Player) NewPlayer(name string){
+	player.Name = name
+	player.Wins = 0
+	player.Losses = 0
+	player.Draws = 0
 }
 
 func SearchName(name string,players *[]Player)int{
@@ -33,8 +37,24 @@ func Getname() string{
 	var buffer string
 	fmt.Printf("Εισάγετε το όνομα σας: ")
 	buffer,_ = reader.ReadString('\n')
-	ClearNewLine(&buffer)
+	utilities.ClearNewLine(&buffer)
 	return buffer
+}
+
+func fixfile(file *os.File){
+	file.Seek(0,0)
+
+}
+
+func filerr(err error,file *os.File){
+	if err!=nil{
+		fmt.Println("Malformed file. Want to try and repair it?(Data may be lost!)")
+		if utilities.PromptYesNo(){
+			fixfile(file)
+		}else {
+			os.Exit(5)
+		}
+	}
 }
 
 func LoadFile() []Player{
@@ -52,21 +72,15 @@ func LoadFile() []Player{
 		} else if err != nil{
 			panic(err)
 		}
-		wins,_ := strconv.Atoi(line[1])
-		draws,_ := strconv.Atoi(line[2])
+		wins,err := strconv.Atoi(line[1])
+		filerr(err,file)
+		draws,err := strconv.Atoi(line[2])
+		filerr(err,file)
 		losses,_ := strconv.Atoi(line[3])
+		filerr(err,file)
 		temp = append(temp,Player{Name: line[0], Wins:wins, Draws:draws, Losses:losses})
 	}
 	return temp
-}
-
-func NewPlayer(name string) Player{
-	var newp Player
-	newp.Draws =0
-	newp.Losses = 0
-	newp.Wins = 0
-	newp.Name = name
-	return newp
 }
 
 func SaveFile(players *[]Player){
