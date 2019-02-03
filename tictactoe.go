@@ -67,7 +67,7 @@ func CheckForThree(level [3][3]string, player string) (i, j int) {
 	if streak == 2 {
 		for j := 0; j < 3; j++ {
 			if level[j][j] != player {
-				return i, j
+				return j, j
 			}
 		}
 	}
