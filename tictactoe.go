@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com⁄Teogramm⁄TicTacToe/network"
-	"github.com⁄Teogramm⁄TicTacToe/persistence"
-	"github.com⁄Teogramm⁄TicTacToe/utilities"
+	"github.com⁄teogramm⁄TicTacToe/network"
+	"github.com⁄teogramm⁄TicTacToe/persistence"
+	"github.com⁄teogramm⁄TicTacToe/utilities"
 	"math/rand"
 	"strconv"
 	"time"
